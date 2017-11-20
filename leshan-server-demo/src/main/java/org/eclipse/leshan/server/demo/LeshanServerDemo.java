@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Sierra Wireless - initial API and implementation
  *     Bosch Software Innovations - added Redis URL support with authentication
- *     Firis SA - added mDNS services registering 
+ *     Firis SA - added mDNS services registering
  *******************************************************************************/
 package org.eclipse.leshan.server.demo;
 
@@ -90,29 +90,29 @@ public class LeshanServerDemo {
 
     private final static String[] modelPaths = new String[] { "31024.xml",
 
-                            "10241.xml", "10242.xml", "10243.xml", "10244.xml", "10245.xml", "10246.xml", "10247.xml",
-                            "10248.xml", "10249.xml", "10250.xml",
+            "10241.xml", "10242.xml", "10243.xml", "10244.xml", "10245.xml", "10246.xml", "10247.xml",
+            "10248.xml", "10249.xml", "10250.xml",
 
-                            "2048.xml", "2049.xml", "2050.xml", "2051.xml", "2052.xml", "2053.xml", "2054.xml",
-                            "2055.xml", "2056.xml", "2057.xml",
+            "2048.xml", "2049.xml", "2050.xml", "2051.xml", "2052.xml", "2053.xml", "2054.xml",
+            "2055.xml", "2056.xml", "2057.xml",
 
-                            "3200.xml", "3201.xml", "3202.xml", "3203.xml", "3300.xml", "3301.xml", "3302.xml",
-                            "3303.xml", "3304.xml", "3305.xml", "3306.xml", "3308.xml", "3310.xml", "3311.xml",
-                            "3312.xml", "3313.xml", "3314.xml", "3315.xml", "3316.xml", "3317.xml", "3318.xml",
-                            "3319.xml", "3320.xml", "3321.xml", "3322.xml", "3323.xml", "3324.xml", "3325.xml",
-                            "3326.xml", "3327.xml", "3328.xml", "3329.xml", "3330.xml", "3331.xml", "3332.xml",
-                            "3333.xml", "3334.xml", "3335.xml", "3336.xml", "3337.xml", "3338.xml", "3339.xml",
-                            "3340.xml", "3341.xml", "3342.xml", "3343.xml", "3344.xml", "3345.xml", "3346.xml",
-                            "3347.xml", "3348.xml",
+            "3200.xml", "3201.xml", "3202.xml", "3203.xml", "3300.xml", "3301.xml", "3302.xml",
+            "3303.xml", "3304.xml", "3305.xml", "3306.xml", "3308.xml", "3310.xml", "3311.xml",
+            "3312.xml", "3313.xml", "3314.xml", "3315.xml", "3316.xml", "3317.xml", "3318.xml",
+            "3319.xml", "3320.xml", "3321.xml", "3322.xml", "3323.xml", "3324.xml", "3325.xml",
+            "3326.xml", "3327.xml", "3328.xml", "3329.xml", "3330.xml", "3331.xml", "3332.xml",
+            "3333.xml", "3334.xml", "3335.xml", "3336.xml", "3337.xml", "3338.xml", "3339.xml",
+            "3340.xml", "3341.xml", "3342.xml", "3343.xml", "3344.xml", "3345.xml", "3346.xml",
+            "3347.xml", "3348.xml",
 
-                            "Communication_Characteristics-V1_0.xml",
+            "Communication_Characteristics-V1_0.xml",
 
-                            "LWM2M_Lock_and_Wipe-V1_0.xml", "LWM2M_Cellular_connectivity-v1_0.xml",
-                            "LWM2M_APN_connection_profile-v1_0.xml", "LWM2M_WLAN_connectivity4-v1_0.xml",
-                            "LWM2M_Bearer_selection-v1_0.xml", "LWM2M_Portfolio-v1_0.xml", "LWM2M_DevCapMgmt-v1_0.xml",
-                            "LWM2M_Software_Component-v1_0.xml", "LWM2M_Software_Management-v1_0.xml",
+            "LWM2M_Lock_and_Wipe-V1_0.xml", "LWM2M_Cellular_connectivity-v1_0.xml",
+            "LWM2M_APN_connection_profile-v1_0.xml", "LWM2M_WLAN_connectivity4-v1_0.xml",
+            "LWM2M_Bearer_selection-v1_0.xml", "LWM2M_Portfolio-v1_0.xml", "LWM2M_DevCapMgmt-v1_0.xml",
+            "LWM2M_Software_Component-v1_0.xml", "LWM2M_Software_Management-v1_0.xml",
 
-                            "Non-Access_Stratum_NAS_configuration-V1_0.xml" };
+            "Non-Access_Stratum_NAS_configuration-V1_0.xml" };
 
     private final static String USAGE = "java -jar leshan-server-demo.jar [OPTION]";
 
@@ -120,9 +120,9 @@ public class LeshanServerDemo {
 
     private final static String DEFAULT_KEYSTORE_ALIAS = "leshan";
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         // Define options for command line tools
-        Options options = new Options();
+        final Options options = new Options();
 
         options.addOption("h", "help", false, "Display help information.");
         options.addOption("lh", "coaphost", true, "Set the local CoAP address.\n  Default: any local address.");
@@ -144,14 +144,14 @@ public class LeshanServerDemo {
         options.addOption("r", "redis", true,
                 "Set the location of the Redis database for running in cluster mode. The URL is in the format of: 'redis://:password@hostname:port/db_number'\nExample without DB and password: 'redis://localhost:6379'\nDefault: none, no Redis connection.");
         options.addOption("mdns", "publishDNSSdServices", false, "Publish leshan's services to DNS Service discovery");
-        HelpFormatter formatter = new HelpFormatter();
+        final HelpFormatter formatter = new HelpFormatter();
         formatter.setOptionComparator(null);
 
         // Parse arguments
         CommandLine cl;
         try {
             cl = new DefaultParser().parse(options, args);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             System.err.println("Parsing failed.  Reason: " + e.getMessage());
             formatter.printHelp(USAGE, options);
             return;
@@ -171,72 +171,75 @@ public class LeshanServerDemo {
         }
 
         // get local address
-        String localAddress = cl.getOptionValue("lh");
-        String localPortOption = cl.getOptionValue("lp");
+        final String localAddress = cl.getOptionValue("lh");
+        final String localPortOption = cl.getOptionValue("lp");
         int localPort = LwM2m.DEFAULT_COAP_PORT;
         if (localPortOption != null) {
             localPort = Integer.parseInt(localPortOption);
         }
 
         // get secure local address
-        String secureLocalAddress = cl.getOptionValue("slh");
-        String secureLocalPortOption = cl.getOptionValue("slp");
+        final String secureLocalAddress = cl.getOptionValue("slh");
+        final String secureLocalPortOption = cl.getOptionValue("slp");
         int secureLocalPort = LwM2m.DEFAULT_COAP_SECURE_PORT;
         if (secureLocalPortOption != null) {
             secureLocalPort = Integer.parseInt(secureLocalPortOption);
         }
 
         // get http port
-        String webPortOption = cl.getOptionValue("wp");
+        final String webPortOption = cl.getOptionValue("wp");
         int webPort = 8080;
         if (webPortOption != null) {
             webPort = Integer.parseInt(webPortOption);
         }
 
         // Get models folder
-        String modelsFolderPath = cl.getOptionValue("m");
+        final String modelsFolderPath = cl.getOptionValue("m");
 
         // get the Redis hostname:port
-        String redisUrl = cl.getOptionValue("r");
+        final String redisUrl = cl.getOptionValue("r");
 
         // Get keystore parameters
-        String keyStorePath = cl.getOptionValue("ks");
-        String keyStoreType = cl.getOptionValue("kst", KeyStore.getDefaultType());
-        String keyStorePass = cl.getOptionValue("ksp");
-        String keyStoreAlias = cl.getOptionValue("ksa");
-        String keyStoreAliasPass = cl.getOptionValue("ksap");
+        final String keyStorePath = cl.getOptionValue("ks");
+        final String keyStoreType = cl.getOptionValue("kst", KeyStore.getDefaultType());
+        final String keyStorePass = cl.getOptionValue("ksp");
+        final String keyStoreAlias = cl.getOptionValue("ksa");
+        final String keyStoreAliasPass = cl.getOptionValue("ksap");
 
         // Get mDNS publish switch
-        Boolean publishDNSSdServices = cl.hasOption("mdns");
+        final Boolean publishDNSSdServices = cl.hasOption("mdns");
 
         try {
             createAndStartServer(webPort, localAddress, localPort, secureLocalAddress, secureLocalPort,
                     modelsFolderPath, redisUrl, keyStorePath, keyStoreType, keyStorePass, keyStoreAlias,
                     keyStoreAliasPass, publishDNSSdServices);
-        } catch (BindException e) {
+        } catch (final BindException e) {
             System.err.println(
                     String.format("Web port %s is already used, you could change it using 'webport' option.", webPort));
             formatter.printHelp(USAGE, options);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.error("Jetty stopped with unexpected error ...", e);
         }
     }
 
-    public static void createAndStartServer(int webPort, String localAddress, int localPort, String secureLocalAddress,
-            int secureLocalPort, String modelsFolderPath, String redisUrl, String keyStorePath, String keyStoreType,
-            String keyStorePass, String keyStoreAlias, String keyStoreAliasPass, Boolean publishDNSSdServices)
+    public static void createAndStartServer(final int webPort, final String localAddress, final int localPort,
+            final String secureLocalAddress,
+            final int secureLocalPort, final String modelsFolderPath, final String redisUrl, final String keyStorePath,
+            final String keyStoreType,
+            final String keyStorePass, final String keyStoreAlias, final String keyStoreAliasPass,
+            final Boolean publishDNSSdServices)
             throws Exception {
         // Prepare LWM2M server
-        LeshanServerBuilder builder = new LeshanServerBuilder();
+        final LeshanServerBuilder builder = new LeshanServerBuilder();
         builder.setLocalAddress(localAddress, localPort);
         builder.setLocalSecureAddress(secureLocalAddress, secureLocalPort);
         builder.setEncoder(new DefaultLwM2mNodeEncoder());
-        LwM2mNodeDecoder decoder = new DefaultLwM2mNodeDecoder();
+        final LwM2mNodeDecoder decoder = new DefaultLwM2mNodeDecoder();
         builder.setDecoder(decoder);
 
         // Create CoAP Config
         NetworkConfig coapConfig;
-        File configFile = new File(NetworkConfig.DEFAULT_FILE_NAME);
+        final File configFile = new File(NetworkConfig.DEFAULT_FILE_NAME);
         if (configFile.isFile()) {
             coapConfig = new NetworkConfig();
             coapConfig.load(configFile);
@@ -258,23 +261,23 @@ public class LeshanServerDemo {
         // Set up X.509 mode
         if (keyStorePath != null) {
             try {
-                KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+                final KeyStore keyStore = KeyStore.getInstance(keyStoreType);
                 try (FileInputStream fis = new FileInputStream(keyStorePath)) {
                     keyStore.load(fis, keyStorePass == null ? null : keyStorePass.toCharArray());
-                    List<Certificate> trustedCertificates = new ArrayList<>();
-                    for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
-                        String alias = aliases.nextElement();
+                    final List<Certificate> trustedCertificates = new ArrayList<>();
+                    for (final Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+                        final String alias = aliases.nextElement();
                         if (keyStore.isCertificateEntry(alias)) {
                             trustedCertificates.add(keyStore.getCertificate(alias));
                         } else if (keyStore.isKeyEntry(alias) && alias.equals(keyStoreAlias)) {
-                            List<X509Certificate> x509CertificateChain = new ArrayList<>();
-                            Certificate[] certificateChain = keyStore.getCertificateChain(alias);
+                            final List<X509Certificate> x509CertificateChain = new ArrayList<>();
+                            final Certificate[] certificateChain = keyStore.getCertificateChain(alias);
                             if (certificateChain == null || certificateChain.length == 0) {
                                 LOG.error("Keystore alias must have a non-empty chain of X509Certificates.");
                                 System.exit(-1);
                             }
 
-                            for (Certificate certificate : certificateChain) {
+                            for (final Certificate certificate : certificateChain) {
                                 if (!(certificate instanceof X509Certificate)) {
                                     LOG.error("Non-X.509 certificate in alias chain is not supported: {}", certificate);
                                     System.exit(-1);
@@ -282,7 +285,7 @@ public class LeshanServerDemo {
                                 x509CertificateChain.add((X509Certificate) certificate);
                             }
 
-                            Key key = keyStore.getKey(alias,
+                            final Key key = keyStore.getKey(alias,
                                     keyStoreAliasPass == null ? new char[0] : keyStoreAliasPass.toCharArray());
                             if (!(key instanceof PrivateKey)) {
                                 LOG.error("Keystore alias must have a PrivateKey entry, was {}",
@@ -307,26 +310,26 @@ public class LeshanServerDemo {
         else {
             try {
                 // Get point values
-                byte[] publicX = Hex
+                final byte[] publicX = Hex
                         .decodeHex("fcc28728c123b155be410fc1c0651da374fc6ebe7f96606e90d927d188894a73".toCharArray());
-                byte[] publicY = Hex
+                final byte[] publicY = Hex
                         .decodeHex("d2ffaa73957d76984633fc1cc54d0b763ca0559a9dff9706e9f4557dacc3f52a".toCharArray());
-                byte[] privateS = Hex
+                final byte[] privateS = Hex
                         .decodeHex("1dae121ba406802ef07c193c1ee4df91115aabd79c1ed7f4c0ef7ef6a5449400".toCharArray());
 
                 // Get Elliptic Curve Parameter spec for secp256r1
-                AlgorithmParameters algoParameters = AlgorithmParameters.getInstance("EC");
+                final AlgorithmParameters algoParameters = AlgorithmParameters.getInstance("EC");
                 algoParameters.init(new ECGenParameterSpec("secp256r1"));
-                ECParameterSpec parameterSpec = algoParameters.getParameterSpec(ECParameterSpec.class);
+                final ECParameterSpec parameterSpec = algoParameters.getParameterSpec(ECParameterSpec.class);
 
                 // Create key specs
-                KeySpec publicKeySpec = new ECPublicKeySpec(
+                final KeySpec publicKeySpec = new ECPublicKeySpec(
                         new ECPoint(new BigInteger(publicX), new BigInteger(publicY)), parameterSpec);
-                KeySpec privateKeySpec = new ECPrivateKeySpec(new BigInteger(privateS), parameterSpec);
+                final KeySpec privateKeySpec = new ECPrivateKeySpec(new BigInteger(privateS), parameterSpec);
 
                 // Get keys
                 publicKey = KeyFactory.getInstance("EC").generatePublic(publicKeySpec);
-                PrivateKey privateKey = KeyFactory.getInstance("EC").generatePrivate(privateKeySpec);
+                final PrivateKey privateKey = KeyFactory.getInstance("EC").generatePrivate(privateKeySpec);
                 builder.setPublicKey(publicKey);
                 builder.setPrivateKey(privateKey);
             } catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidParameterSpecException e) {
@@ -336,12 +339,12 @@ public class LeshanServerDemo {
         }
 
         // Define model provider
-        List<ObjectModel> models = ObjectLoader.loadDefault();
+        final List<ObjectModel> models = ObjectLoader.loadDefault();
         models.addAll(ObjectLoader.loadDdfResources("/models/", modelPaths));
         if (modelsFolderPath != null) {
             models.addAll(ObjectLoader.loadObjectsFromDir(new File(modelsFolderPath)));
         }
-        LwM2mModelProvider modelProvider = new StaticModelProvider(models);
+        final LwM2mModelProvider modelProvider = new StaticModelProvider(models);
         builder.setObjectModelProvider(modelProvider);
 
         // Set securityStore & registrationStore
@@ -357,47 +360,47 @@ public class LeshanServerDemo {
         builder.setSecurityStore(securityStore);
 
         // Create and start LWM2M server
-        LeshanServer lwServer = builder.build();
+        final LeshanServer lwServer = builder.build();
 
         // Now prepare Jetty
-        Server server = new Server(webPort);
-        WebAppContext root = new WebAppContext();
+        final Server server = new Server(webPort);
+        final WebAppContext root = new WebAppContext();
         root.setContextPath("/");
         root.setResourceBase(LeshanServerDemo.class.getClassLoader().getResource("webapp").toExternalForm());
         root.setParentLoaderPriority(true);
         server.setHandler(root);
 
         // Create Servlet
-        EventServlet eventServlet = new EventServlet(lwServer, lwServer.getSecuredAddress().getPort());
-        ServletHolder eventServletHolder = new ServletHolder(eventServlet);
+        final EventServlet eventServlet = new EventServlet(lwServer, lwServer.getSecuredAddress().getPort());
+        final ServletHolder eventServletHolder = new ServletHolder(eventServlet);
         root.addServlet(eventServletHolder, "/event/*");
 
-        ServletHolder clientServletHolder = new ServletHolder(
+        final ServletHolder clientServletHolder = new ServletHolder(
                 new ClientServlet(lwServer, lwServer.getSecuredAddress().getPort()));
         root.addServlet(clientServletHolder, "/api/clients/*");
 
-        ServletHolder securityServletHolder = new ServletHolder(new SecurityServlet(securityStore, publicKey));
+        final ServletHolder securityServletHolder = new ServletHolder(new SecurityServlet(securityStore, publicKey));
         root.addServlet(securityServletHolder, "/api/security/*");
 
-        ServletHolder objectSpecServletHolder = new ServletHolder(new ObjectSpecServlet(lwServer.getModelProvider()));
+        final ServletHolder objectSpecServletHolder = new ServletHolder(new ObjectSpecServlet(lwServer));
         root.addServlet(objectSpecServletHolder, "/api/objectspecs/*");
 
         // Register a service to DNS-SD
         if (publishDNSSdServices) {
 
             // Create a JmDNS instance
-            JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
+            final JmDNS jmdns = JmDNS.create(InetAddress.getLocalHost());
 
             // Publish Leshan HTTP Service
-            ServiceInfo httpServiceInfo = ServiceInfo.create("_http._tcp.local.", "leshan", webPort, "");
+            final ServiceInfo httpServiceInfo = ServiceInfo.create("_http._tcp.local.", "leshan", webPort, "");
             jmdns.registerService(httpServiceInfo);
 
             // Publish Leshan CoAP Service
-            ServiceInfo coapServiceInfo = ServiceInfo.create("_coap._udp.local.", "leshan", localPort, "");
+            final ServiceInfo coapServiceInfo = ServiceInfo.create("_coap._udp.local.", "leshan", localPort, "");
             jmdns.registerService(coapServiceInfo);
 
             // Publish Leshan Secure CoAP Service
-            ServiceInfo coapSecureServiceInfo = ServiceInfo.create("_coaps._udp.local.", "leshan", secureLocalPort, "");
+            final ServiceInfo coapSecureServiceInfo = ServiceInfo.create("_coaps._udp.local.", "leshan", secureLocalPort, "");
             jmdns.registerService(coapSecureServiceInfo);
         }
 
