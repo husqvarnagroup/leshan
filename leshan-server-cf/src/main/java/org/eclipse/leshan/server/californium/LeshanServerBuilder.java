@@ -12,6 +12,8 @@
  * 
  * Contributors:
  *     Sierra Wireless - initial API and implementation
+ *     Achim Kraus (Bosch Software Innovations GmbH) - use Lwm2mEndpointContextMatcher
+ *                                                     for secure endpoint.
  *******************************************************************************/
 package org.eclipse.leshan.server.californium;
 
@@ -29,6 +31,7 @@ import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.leshan.LwM2m;
 import org.eclipse.leshan.core.californium.EndpointFactory;
+import org.eclipse.leshan.core.californium.Lwm2mEndpointContextMatcher;
 import org.eclipse.leshan.core.node.LwM2mNode;
 import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeDecoder;
 import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeEncoder;
@@ -226,7 +229,7 @@ public class LeshanServerBuilder {
      * For RPK the public key will be extract from the first X509 certificate of the certificate chain. If you only need
      * RPK support, use {@link LeshanServerBuilder#setPublicKey(PublicKey)} instead.
      */
-    public LeshanServerBuilder setCertificateChain(X509Certificate[] certificateChain) {
+    public <T extends X509Certificate> LeshanServerBuilder setCertificateChain(T[] certificateChain) {
         this.certificateChain = certificateChain;
         return this;
     }
@@ -234,7 +237,7 @@ public class LeshanServerBuilder {
     /**
      * The list of trusted certificates used to authenticate devices.
      */
-    public LeshanServerBuilder setTrustedCertificates(Certificate[] trustedCertificates) {
+    public <T extends Certificate> LeshanServerBuilder setTrustedCertificates(T[] trustedCertificates) {
         this.trustedCertificates = trustedCertificates;
         return this;
     }
@@ -397,7 +400,8 @@ public class LeshanServerBuilder {
                             && !Arrays.equals(incompleteConfig.getCertificateChain(), certificateChain)) {
                         throw new IllegalStateException(String.format(
                                 "Configuration conflict between LeshanBuilder and DtlsConnectorConfig.Builder for certificate chain: %s != %s",
-                                certificateChain, incompleteConfig.getCertificateChain()));
+                                Arrays.toString(certificateChain),
+                                Arrays.toString(incompleteConfig.getCertificateChain())));
                     }
 
                     dtlsConfigBuilder.setIdentity(privateKey, certificateChain, false);
@@ -427,7 +431,7 @@ public class LeshanServerBuilder {
             if (endpointFactory != null) {
                 securedEndpoint = endpointFactory.createSecuredEndpoint(dtlsConfig, coapConfig, registrationStore);
             } else {
-                securedEndpoint = new CoapEndpoint(new DTLSConnector(dtlsConfig), coapConfig, registrationStore, null);
+                securedEndpoint = new CoapEndpoint(new DTLSConnector(dtlsConfig), coapConfig, registrationStore, null, new Lwm2mEndpointContextMatcher());
             }
         }
 

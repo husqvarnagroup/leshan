@@ -18,17 +18,17 @@ package org.eclipse.leshan.server.cluster.serialization;
 import static org.junit.Assert.assertEquals;
 
 import java.net.Inet4Address;
-import java.net.InetSocketAddress;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.leshan.Link;
-import org.eclipse.leshan.server.cluster.serialization.RegistrationSerDes;
-import org.eclipse.leshan.server.registration.Registration;
+import org.eclipse.leshan.LwM2m;
+import org.eclipse.leshan.core.request.BindingMode;
+import org.eclipse.leshan.core.request.Identity;
+import org.eclipse.leshan.server.registration.RegistrationUpdate;
 import org.junit.Test;
 
-public class ClientSerDesTest {
+public class RegistrationUpdateSerDesTest {
 
     @Test
     public void ser_and_des_are_equals() throws Exception {
@@ -36,19 +36,17 @@ public class ClientSerDesTest {
         Map<String, Object> att = new HashMap<>();
         att.put("ts", 12);
         att.put("rt", "test");
+        att.put("hb", null);
         objs[0] = new Link("/0/1024/2", att);
         objs[1] = new Link("/0/2");
 
-        Registration.Builder builder = new Registration.Builder("registrationId", "endpoint", Inet4Address.getByName("127.0.0.1"),
-                1, new InetSocketAddress(212)).objectLinks(objs);
+        RegistrationUpdate ru = new RegistrationUpdate("myId",
+                Identity.unsecure(Inet4Address.getByName("127.0.0.1"), LwM2m.DEFAULT_COAP_PORT), 60000l, null,
+                BindingMode.U, objs);
 
-        builder.registrationDate(new Date(100L));
-        builder.lastUpdate(new Date(101L));
-        Registration r = builder.build();
+        byte[] ser = RegistrationUpdateSerDes.bSerialize(ru);
+        RegistrationUpdate ru2 = RegistrationUpdateSerDes.deserialize(ser);
 
-        byte[] ser = RegistrationSerDes.bSerialize(r);
-        Registration r2 = RegistrationSerDes.deserialize(ser);
-
-        assertEquals(r, r2);
+        assertEquals(ru, ru2);
     }
 }

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.leshan.util.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,25 +46,15 @@ public class ObjectModel {
 
     public final Map<Integer, ResourceModel> resources; // resources by ID
 
-    public ObjectModel(int id, String name, String description, boolean multiple, boolean mandatory,
-            ResourceModel... resources) {
-        this(id, name, description, DEFAULT_VERSION, multiple, mandatory, Arrays.asList(resources));
-    }
-
-    public ObjectModel(int id, String name, String description, boolean multiple, boolean mandatory,
-            Collection<ResourceModel> resources) {
-        this(id, name, description, DEFAULT_VERSION, multiple, mandatory, resources);
-    }
-
-    public ObjectModel(int id, String name, String description, String version, boolean multiple,
-            boolean mandatory,
+    public ObjectModel(int id, String name, String description, String version, boolean multiple, boolean mandatory,
             ResourceModel... resources) {
         this(id, name, description, version, multiple, mandatory, Arrays.asList(resources));
     }
 
-    public ObjectModel(int id, String name, String description, String version, boolean multiple,
-            boolean mandatory,
+    public ObjectModel(int id, String name, String description, String version, boolean multiple, boolean mandatory,
             Collection<ResourceModel> resources) {
+        Validate.notEmpty(version);
+
         this.id = id;
         this.name = name;
         this.description = description;
@@ -91,8 +82,7 @@ public class ObjectModel {
         StringBuilder builder = new StringBuilder();
         builder.append("ObjectModel [id=").append(id).append(", name=").append(name).append(", description=")
                 .append(description).append(", version=").append(version).append(", multiple=").append(multiple)
-                .append(", mandatory=").append(mandatory)
-                .append(", resources=").append(resources).append("]");
+                .append(", mandatory=").append(mandatory).append(", resources=").append(resources).append("]");
         return builder.toString();
     }
 

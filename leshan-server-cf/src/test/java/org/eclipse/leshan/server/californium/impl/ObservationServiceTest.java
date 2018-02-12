@@ -18,16 +18,19 @@ package org.eclipse.leshan.server.californium.impl;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.leshan.LwM2m;
+import org.eclipse.leshan.core.californium.EndpointContextUtil;
 import org.eclipse.leshan.core.node.LwM2mPath;
 import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeDecoder;
 import org.eclipse.leshan.core.observation.Observation;
+import org.eclipse.leshan.core.request.Identity;
+import org.eclipse.leshan.core.request.ObserveRequest;
 import org.eclipse.leshan.server.californium.CaliforniumRegistrationStore;
+import org.eclipse.leshan.server.californium.ObserveUtil;
 import org.eclipse.leshan.server.model.StandardModelProvider;
 import org.eclipse.leshan.server.registration.Registration;
 import org.junit.Assert;
@@ -138,11 +141,9 @@ public class ObservationServiceTest {
         coapRequest.getOptions().addUriPath(String.valueOf(target.getObjectInstanceId()));
         coapRequest.getOptions().addUriPath(String.valueOf(target.getResourceId()));
         coapRequest.setObserve();
-        coapRequest.setDestination(support.registration.getAddress());
-        coapRequest.setDestinationPort(support.registration.getPort());
-        Map<String, String> context = new HashMap<>();
-        context.put(CoapRequestBuilder.CTX_REGID, registrationId);
-        context.put(CoapRequestBuilder.CTX_LWM2M_PATH, target.toString());
+        coapRequest.setDestinationContext(EndpointContextUtil.extractContext(support.registration.getIdentity()));
+        Map<String, String> context = ObserveUtil.createCoapObserveRequestContext(registration.getEndpoint(),
+                registrationId, new ObserveRequest(target.toString()));
         coapRequest.setUserContext(context);
 
         store.add(new org.eclipse.californium.core.observe.Observation(coapRequest, null));
@@ -158,8 +159,8 @@ public class ObservationServiceTest {
                 LwM2m.DEFAULT_COAP_PORT);
         Registration.Builder builder;
         try {
-            builder = new Registration.Builder(registrationId, registrationId + "_ep", InetAddress.getLocalHost(),
-                    10000, registrationAddress);
+            builder = new Registration.Builder(registrationId, registrationId + "_ep",
+                    Identity.unsecure(InetAddress.getLocalHost(), 10000), registrationAddress);
             return builder.build();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);

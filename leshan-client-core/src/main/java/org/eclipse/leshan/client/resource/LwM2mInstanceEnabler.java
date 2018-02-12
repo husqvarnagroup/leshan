@@ -91,11 +91,9 @@ public interface LwM2mInstanceEnabler {
     ExecuteResponse execute(int resourceid, String params);
 
     /**
-     * Performs an observe register or deregister on one of this LWM2M object
-     * instance's resources.
+     * Performs an observe register on one of this LWM2M object instance's resources.
      *
-     * @param resourceid
-     *            the ID of the resource to set the value for
+     * @param resourceid the ID of the resource to set the value for
      */
     ObserveResponse observe(int resourceid);
 

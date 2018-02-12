@@ -194,7 +194,7 @@ public final class LinkFormatHelper {
     }
 
     private static Map<String, ?> getObjectAttributes(ObjectModel objectModel) {
-        if (StringUtils.isEmpty(objectModel.version) || objectModel.version.equals(ObjectModel.DEFAULT_VERSION)) {
+        if (StringUtils.isEmpty(objectModel.version) || ObjectModel.DEFAULT_VERSION.equals(objectModel.version)) {
             return null;
         }
         Map<String, String> attributes = new HashMap<>();

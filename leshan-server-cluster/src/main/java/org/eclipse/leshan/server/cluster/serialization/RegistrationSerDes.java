@@ -37,8 +37,7 @@ public class RegistrationSerDes {
     public static JsonObject jSerialize(Registration r) {
         JsonObject o = Json.object();
         o.add("regDate", r.getRegistrationDate().getTime());
-        o.add("address", r.getAddress().getHostAddress());
-        o.add("port", r.getPort());
+        o.add("identity", IdentitySerDes.serialize(r.getIdentity()));
         o.add("regAddr", r.getRegistrationEndpointAddress().getHostString());
         o.add("regPort", r.getRegistrationEndpointAddress().getPort());
         o.add("lt", r.getLifeTimeInSec());
@@ -56,7 +55,9 @@ public class RegistrationSerDes {
             ol.add("url", l.getUrl());
             JsonObject at = Json.object();
             for (Map.Entry<String, Object> e : l.getAttributes().entrySet()) {
-                if (e.getValue() instanceof Integer) {
+                if (e.getValue() == null) {
+                    at.add(e.getKey(), Json.NULL);
+                } else if (e.getValue() instanceof Integer) {
                     at.add(e.getKey(), (int) e.getValue());
                 } else {
                     at.add(e.getKey(), e.getValue().toString());
@@ -86,8 +87,7 @@ public class RegistrationSerDes {
 
     public static Registration deserialize(JsonObject jObj) {
         Registration.Builder b = new Registration.Builder(jObj.getString("regId", null), jObj.getString("ep", null),
-                new InetSocketAddress(jObj.getString("address", null), jObj.getInt("port", 0)).getAddress(),
-                jObj.getInt("port", 0),
+                IdentitySerDes.deserialize(jObj.get("identity").asObject()),
                 new InetSocketAddress(jObj.getString("regAddr", null), jObj.getInt("regPort", 0)));
         b.bindingMode(BindingMode.valueOf(jObj.getString("bnd", null)));
         b.lastUpdate(new Date(jObj.getLong("lastUp", 0)));
@@ -107,7 +107,9 @@ public class RegistrationSerDes {
             JsonObject att = (JsonObject) ol.get("at");
             for (String k : att.names()) {
                 JsonValue jsonValue = att.get(k);
-                if (jsonValue.isNumber()) {
+                if (jsonValue.isNull()) {
+                    attMap.put(k, null);
+                } else if (jsonValue.isNumber()) {
                     attMap.put(k, jsonValue.asInt());
                 } else {
                     attMap.put(k, jsonValue.asString());

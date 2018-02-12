@@ -12,6 +12,8 @@
  * 
  * Contributors:
  *     Sierra Wireless - initial API and implementation
+ *     Achim Kraus (Bosch Software Innovations GmbH) - set exception in onSendError
+ *     Simon Bernard                                 - use specific exception for onSendError  
  *******************************************************************************/
 package org.eclipse.leshan.core.californium;
 
@@ -23,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.leshan.core.request.exception.RequestRejectedException;
+import org.eclipse.leshan.core.request.exception.SendFailedException;
 import org.eclipse.leshan.core.response.LwM2mResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +37,10 @@ public abstract class SyncRequestObserver<T extends LwM2mResponse> extends Abstr
     private CountDownLatch latch = new CountDownLatch(1);
     private AtomicReference<T> ref = new AtomicReference<>(null);
     private AtomicBoolean coapTimeout = new AtomicBoolean(false);
-    private AtomicBoolean acknowledged = new AtomicBoolean(false);
     private AtomicReference<RuntimeException> exception = new AtomicReference<>();
-    private Long timeout;
+    private long timeout;
 
-    public SyncRequestObserver(Request coapRequest, Long timeout) {
+    public SyncRequestObserver(Request coapRequest, long timeout) {
         super(coapRequest);
         this.timeout = timeout;
     }
@@ -77,24 +79,16 @@ public abstract class SyncRequestObserver<T extends LwM2mResponse> extends Abstr
     }
 
     @Override
-    public void onAcknowledgement() {
-        acknowledged.set(true);
-        super.onAcknowledgement();
+    public void onSendError(Throwable error) {
+        exception.set(new SendFailedException(error, "Request %s cannot be sent", coapRequest, error.getMessage()));
+        latch.countDown();
     }
-    
+
     public T waitForResponse() throws InterruptedException {
         try {
-            boolean timedOut = false;
-            if (timeout != null) {
-                do {
-                    acknowledged.set(false);
-                    boolean latchResult = latch.await(timeout, TimeUnit.MILLISECONDS);
-                    timedOut = !latchResult && !acknowledged.get();
-                } while (!timedOut && acknowledged.get());
-            } else {
-                latch.await();
-            }
-            if (timedOut || coapTimeout.get()) {
+            boolean timeElapsed = false;
+            timeElapsed = !latch.await(timeout, TimeUnit.MILLISECONDS);
+            if (timeElapsed || coapTimeout.get()) {
                 coapRequest.cancel();
             }
         } finally {

@@ -15,8 +15,7 @@
  *******************************************************************************/
 package org.eclipse.leshan.server.californium.impl;
 
-import java.net.InetSocketAddress;
-
+import org.eclipse.californium.core.coap.MessageObserver;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.network.Endpoint;
@@ -28,6 +27,7 @@ import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeEncoder;
 import org.eclipse.leshan.core.node.codec.LwM2mNodeDecoder;
 import org.eclipse.leshan.core.node.codec.LwM2mNodeEncoder;
 import org.eclipse.leshan.core.request.DownlinkRequest;
+import org.eclipse.leshan.core.request.Identity;
 import org.eclipse.leshan.core.response.ErrorCallback;
 import org.eclipse.leshan.core.response.LwM2mResponse;
 import org.eclipse.leshan.core.response.ResponseCallback;
@@ -53,10 +53,10 @@ public class CaliforniumLwM2mBootstrapRequestSender implements LwM2mBootstrapReq
     }
 
     @Override
-    public <T extends LwM2mResponse> T send(final String endpointName, final InetSocketAddress clientAddress,
-            final boolean secure, final DownlinkRequest<T> request, Long timeout) throws InterruptedException {
-        // Create the CoAP request from LwM2m request
-        CoapRequestBuilder coapClientRequestBuilder = new CoapRequestBuilder(clientAddress, model, encoder);
+    public <T extends LwM2mResponse> T send(final String endpointName, final Identity destination,
+            final DownlinkRequest<T> request, long timeout) throws InterruptedException { // Create the CoAP request
+                                                                                          // from LwM2m request
+        CoapRequestBuilder coapClientRequestBuilder = new CoapRequestBuilder(destination, model, encoder);
         request.accept(coapClientRequestBuilder);
 
         final Request coapRequest = coapClientRequestBuilder.getRequest();
@@ -67,9 +67,8 @@ public class CaliforniumLwM2mBootstrapRequestSender implements LwM2mBootstrapReq
             public T buildResponse(Response coapResponse) {
                 // TODO we need to fix that by removing the Client dependency from LwM2MResponseBuilder or by creating a
                 // LwM2mBootstrapResponseBuilder
-                Registration registration = new Registration.Builder("fakeregistrationid", endpointName,
-                        clientAddress.getAddress(), clientAddress.getPort(),
-                        secure ? secureEndpoint.getAddress() : nonSecureEndpoint.getAddress()).build();
+                Registration registration = new Registration.Builder("fakeregistrationid", endpointName, destination,
+                        destination.isSecure() ? secureEndpoint.getAddress() : nonSecureEndpoint.getAddress()).build();
                 // Build LwM2m response
                 LwM2mResponseBuilder<T> lwm2mResponseBuilder = new LwM2mResponseBuilder<>(coapRequest, coapResponse,
                         registration, model, null, decoder);
@@ -80,7 +79,7 @@ public class CaliforniumLwM2mBootstrapRequestSender implements LwM2mBootstrapReq
         coapRequest.addMessageObserver(syncMessageObserver);
 
         // Send CoAP request asynchronously
-        if (secure)
+        if (destination.isSecure())
             secureEndpoint.sendRequest(coapRequest);
         else
             nonSecureEndpoint.sendRequest(coapRequest);
@@ -90,24 +89,22 @@ public class CaliforniumLwM2mBootstrapRequestSender implements LwM2mBootstrapReq
     }
 
     @Override
-    public <T extends LwM2mResponse> void send(final String endpointName, final InetSocketAddress clientAddress,
-            final boolean secure, final DownlinkRequest<T> request, ResponseCallback<T> responseCallback,
+    public <T extends LwM2mResponse> void send(final String endpointName, final Identity destination,
+            final DownlinkRequest<T> request, final long timeout, ResponseCallback<T> responseCallback,
             ErrorCallback errorCallback) {
         // Create the CoAP request from LwM2m request
-        CoapRequestBuilder coapClientRequestBuilder = new CoapRequestBuilder(clientAddress, model, encoder);
+        CoapRequestBuilder coapClientRequestBuilder = new CoapRequestBuilder(destination, model, encoder);
         request.accept(coapClientRequestBuilder);
         final Request coapRequest = coapClientRequestBuilder.getRequest();
 
         // Add CoAP request callback
-        coapRequest.addMessageObserver(new AsyncRequestObserver<T>(coapRequest, responseCallback, errorCallback) {
-
+        MessageObserver obs = new AsyncRequestObserver<T>(coapRequest, responseCallback, errorCallback, timeout) {
             @Override
             public T buildResponse(Response coapResponse) {
                 // TODO we need to fix that by removing the Client dependency from LwM2MResponseBuilder or by creating a
                 // LwM2mBootstrapResponseBuilder
-                Registration registration = new Registration.Builder("fakeregistrationid", endpointName,
-                        clientAddress.getAddress(), clientAddress.getPort(),
-                        secure ? secureEndpoint.getAddress() : nonSecureEndpoint.getAddress()).build();
+                Registration registration = new Registration.Builder("fakeregistrationid", endpointName, destination,
+                        destination.isSecure() ? secureEndpoint.getAddress() : nonSecureEndpoint.getAddress()).build();
 
                 // Build LwM2m response
                 LwM2mResponseBuilder<T> lwm2mResponseBuilder = new LwM2mResponseBuilder<>(coapRequest, coapResponse,
@@ -115,10 +112,11 @@ public class CaliforniumLwM2mBootstrapRequestSender implements LwM2mBootstrapReq
                 request.accept(lwm2mResponseBuilder);
                 return lwm2mResponseBuilder.getResponse();
             }
-        });
+        };
+        coapRequest.addMessageObserver(obs);
 
         // Send CoAP request asynchronously
-        if (secure)
+        if (destination.isSecure())
             secureEndpoint.sendRequest(coapRequest);
         else
             nonSecureEndpoint.sendRequest(coapRequest);
