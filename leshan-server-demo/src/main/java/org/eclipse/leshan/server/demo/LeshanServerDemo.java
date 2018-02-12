@@ -382,7 +382,7 @@ public class LeshanServerDemo {
         final ServletHolder securityServletHolder = new ServletHolder(new SecurityServlet(securityStore, publicKey));
         root.addServlet(securityServletHolder, "/api/security/*");
 
-        final ServletHolder objectSpecServletHolder = new ServletHolder(new ObjectSpecServlet(lwServer));
+        final ServletHolder objectSpecServletHolder = new ServletHolder(new ObjectSpecServlet(lwServer.getModelProvider()));
         root.addServlet(objectSpecServletHolder, "/api/objectspecs/*");
 
         // Register a service to DNS-SD
